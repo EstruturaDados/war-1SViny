@@ -48,8 +48,10 @@ void exib_Territorios(Territorio *territorios, int qtd) {
     }
 }
 
+// Função principal
 int main() {
     int qtd_territorios = 5; // Definindo a quantidade de territorios
+    int opcao; // Variável de opção do menu interativo
 
     Territorio *territorios = (Territorio*) calloc(qtd_territorios, sizeof(Territorio)); // Alocação dinâmica de memória para os territórios
 
@@ -58,9 +60,31 @@ int main() {
         return 1;
     }
 
-    // Chamada das funções
-    cdt_Territorios(territorios, qtd_territorios);
-    exib_Territorios(territorios, qtd_territorios);
+    do {
+        printf ("\n=== MENU PRINCIPAL ===\n");
+        printf ("Digite os números para acessar as opções\n");
+        printf ("1. Cadastrar Territórios\n");
+        printf ("2. Exibir Territórios\n");
+        printf ("0. Sair\n");
+        scanf ("%d", &opcao);
+        getchar (); // Limpa o buffer após ler a opção
+
+        switch (opcao) {
+            case 1:
+                cdt_Territorios(territorios, qtd_territorios);
+                break;
+            case 2:
+                exib_Territorios(territorios, qtd_territorios);
+                break;
+            case 0:
+                printf("\nPrograma encerrado...\n");
+                break;
+            default:
+                printf ("\nOpção inválida! Tente novamente.\n");
+
+        }
+    
+    } while (opcao != 0);
 
     // Liberando memória
     free(territorios);
