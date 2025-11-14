@@ -1,6 +1,7 @@
 #include <stdio.h> // Biblioteca padrão de entrada e saída
 #include <stdlib.h> // Biblioteca padrão para funções utilitárias
 #include <string.h> // Biblioteca para manipulação de strings
+#include <time.h> // Biblioteca para utilização de srand() e time()
 
 // Definindo a estrutura do tipo Territorio
 typedef struct {
@@ -14,7 +15,7 @@ void cdt_Territorios(Territorio *territorios, int qtd) {
     for (int i = 0; i < qtd; i++) {
 
         // Limpa a tela a cada novo território
-        system("clear"); // use "cls" se estiver no Windows
+        system ("clear"); // use "cls" se estiver no Windows
 
         printf ("=== Digite os dados do territorio %d ===\n\n", i + 1);
 
@@ -112,14 +113,100 @@ void mov_Tropas(Territorio *territorios, int qtd) {
 
     // 5. Atualiza os valores
     territorios[origem].tropas -= quant;
-    territorios[origem].tropas += quant;
+    territorios[destino].tropas += quant;
 
     // 6. Mensagem final
     printf ("Movimentação concluída com sucesso!\n");
 
 }
 
-// Função principal
+void atk_Territorios(Territorio *territorios, int qtd) {
+    int atk, def;
+    int dado_atk, dado_def;
+
+    // Inicializa aleatoriedade (faz isso apenas 1x por execução)
+    srand (time(NULL));
+
+    printf ("\n=== Fase de Ataque ===\n\n");
+
+    // Mostra territórios
+    exib_Territorios(territorios, qtd);
+
+    // Escolher atacante
+    printf ("\nEscolha o território ATACANTE (1 a %d): ", qtd);
+    scanf ("%d", &atk);
+    getchar ();
+    atk--;
+
+    if (atk < 0 || atk >= qtd) {
+        printf ("Território atacante inválido!\n");
+        return;
+
+    }
+
+    if (territorios[atk].tropas <= 0) {
+        printf ("O território atacante não possui tropas!\n");
+        return;
+
+    }
+
+    // Escolha defensor
+    printf ("Escolha o território DEFENSOR (1 a %d): ", qtd);
+    scanf ("%d", &def);
+    getchar ();
+    def--;
+
+    if (def < 0 || def >= qtd) {
+        printf ("Território defensor inválido!\n");
+        return;
+
+    }
+
+    if (atk == def) {
+        printf ("Atacante e defensor não podem ser o mesmo território!\n");
+        return;
+
+    }
+
+    if (territorios[def].tropas <= 0) {
+        printf ("O território defensor não possui tropas!\n");
+        return;
+
+    }
+
+    // Sorteio dos dados
+    dado_atk = (rand() % 6) + 1;
+    dado_def = (rand() % 6) + 1;
+
+    printf ("\nDado do ataque: %d\n", dado_atk);
+    printf ("Dado da defesa: %d\n", dado_def);
+
+    // Resultado da batalha
+    if (dado_atk >= dado_def) {
+        printf ("\nAtacante venceu! O defensor perde 1 tropa.\n");
+        territorios[def].tropas--;
+
+        if (territorios[def].tropas <= 0) {
+            printf ("O território defensor foi CONQUISTADO!\n");
+
+        }
+
+    } else {
+        printf ("\nDefensor venceu! O atacante perde 1 tropa.\n");
+        territorios[atk].tropas--;
+
+        if (territorios[atk].tropas <= 0) {
+            printf ("O território atacante foi completamente derrotado!\n");
+
+        }
+    }
+
+    printf ("\n=== Resultado Atualizado ===\n");
+    exib_Territorios(territorios, qtd);
+
+}
+
+// === Função principal ===
 int main() {
     int qtd_territorios = 5; // Definindo a quantidade de territorios
     int opcao; // Variável de opção do menu interativo
@@ -131,11 +218,13 @@ int main() {
         return 1;
     }
 
-    do {
+    do { // Criação do menu de opções
         printf ("\n=== MENU PRINCIPAL ===\n");
         printf ("Digite os números para acessar as opções\n");
         printf ("1. Cadastrar Territórios\n");
         printf ("2. Exibir Territórios\n");
+        printf ("3. Movimentar tropas\n");
+        printf ("4. Atacar e defender territórios\n");
         printf ("0. Sair\n");
         scanf ("%d", &opcao);
         getchar (); // Limpa o buffer após ler a opção
@@ -149,6 +238,9 @@ int main() {
                 break;
             case 3:
                 mov_Tropas(territorios, qtd_territorios);
+                break;
+            case 4:
+                atk_Territorios(territorios, qtd_territorios);
                 break;
             case 0:
                 printf("\nPrograma encerrado...\n");
