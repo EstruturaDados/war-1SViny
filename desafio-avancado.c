@@ -48,6 +48,77 @@ void exib_Territorios(Territorio *territorios, int qtd) {
     }
 }
 
+// Função para mover as tropas
+void mov_Tropas(Territorio *territorios, int qtd) {
+    int origem, destino, quant;
+
+    printf("=== Movimentação das Tropas ===\n\n");
+
+    // 1. Mostra os territórios existentes
+    exib_Territorios(territorios, qtd);
+
+    // 2. Escolha do território de origem
+    printf ("\nMover tropas DE qual território? (1 a %d): ", qtd);
+    scanf ("%d", &origem);
+    getchar ();
+
+    // Ajusta origem para índice (0 a qtd-1)
+    origem--;
+
+    // Validação
+    if (origem < 0 || origem >= qtd) {
+        printf ("Território de origem inválido\n");
+        return;
+
+    }
+
+    // 3. Escolha do territótio destino
+    printf ("Mover tropas PARA qual território? (1 a %d): ", qtd);
+    scanf ("%d", &destino);
+    getchar ();
+
+    destino--;
+
+    if (destino < 0 || destino >= qtd) {
+        printf ("Território de destino inválido!\n");
+        return;
+
+    }
+
+    // Não pode mover para o mesmo território
+    if (origem == destino) {
+        printf("Origem e destino não podem ser iguais!\n");
+        return;
+
+    }
+
+    // 4. Pergunta quantas tropas mover
+    printf ("Quantas tropas deseja mover? ");
+    scanf ("%d", &quant);
+    getchar();
+
+    // Validações
+    if (quant <= 0) {
+        printf ("Quantidade inválida!\n");
+        return;
+
+    }
+
+    if (quant > territorios[origem].tropas) {
+        printf ("Tropas insuficientes no território de orgiem!\n");
+        return;
+
+    }
+
+    // 5. Atualiza os valores
+    territorios[origem].tropas -= quant;
+    territorios[origem].tropas += quant;
+
+    // 6. Mensagem final
+    printf ("Movimentação concluída com sucesso!\n");
+
+}
+
 // Função principal
 int main() {
     int qtd_territorios = 5; // Definindo a quantidade de territorios
@@ -75,6 +146,9 @@ int main() {
                 break;
             case 2:
                 exib_Territorios(territorios, qtd_territorios);
+                break;
+            case 3:
+                mov_Tropas(territorios, qtd_territorios);
                 break;
             case 0:
                 printf("\nPrograma encerrado...\n");
